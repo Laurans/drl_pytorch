@@ -1,6 +1,6 @@
 class Agent:
-    def __init__(self):
-        pass
+    def __init__(self, agent_params):
+        self.logger = agent_params.logger
 
     def step(self, state, action, reward, next_state, done):
         raise NotImplementedError("not implemented step function in your agent")
