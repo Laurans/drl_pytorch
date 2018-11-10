@@ -3,7 +3,7 @@ import random
 import torch
 import numpy as np
 from collections import deque
-from core.utils.params import Params
+
 
 env = gym.make("LunarLander-v2")
 env.seed(0)
@@ -11,14 +11,17 @@ env.seed(0)
 #print("Number of actions: ", env.action_space.n)
 
 
-from core.agents.dummy import DummyAgent
+from core.agents.dqn import MLPAgent
+from core.utils.params import AgentParams
+from core.models.dqn_mlp import QNetwork
 
-agent = DummyAgent(
-    agent_params = Params(verbose=1),
-    state_size=env.observation_space.shape[0], 
-    action_size=env.action_space.n
+agent = MLPAgent(
+    agent_params = AgentParams(verbose=1),
+    state_size=env.observation_space.shape, 
+    action_size=env.action_space.n,
+    model_prototype = QNetwork
 )
-
+"""
 state = env.reset()
 for j in range(200):
     action = agent.act(state)
@@ -28,3 +31,4 @@ for j in range(200):
         break
 
 env.close()
+"""
