@@ -5,8 +5,12 @@ import torch.nn.functional as F
 import numpy as np
 
 
+from core.utils.params import ModelParams
+from torch import Tensor
+
+
 class QNetwork(Model):
-    def __init__(self, model_params):
+    def __init__(self, model_params: ModelParams) -> None:
         super(QNetwork, self).__init__("QNetwork MLP", model_params)
 
         self.fc1 = nn.Linear(
@@ -18,7 +22,7 @@ class QNetwork(Model):
         self.print_model()
         self.reset()
 
-    def _init_weights(self):
+    def _init_weights(self) -> None:
         self.fc1.weight.data = nn.init.kaiming_normal_(
             self.fc1.weight.data, mode="fan_out", nonlinearity="relu"
         )
@@ -29,7 +33,7 @@ class QNetwork(Model):
             self.fc3.weight.data, mode="fan_out", nonlinearity="relu"
         )
 
-    def forward(self, x):
+    def forward(self, x: Tensor) -> Tensor:
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         return self.fc3(x)

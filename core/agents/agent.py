@@ -1,5 +1,8 @@
+from core.utils.params import AgentParams
+
+
 class Agent:
-    def __init__(self, agent_name, agent_params):
+    def __init__(self, agent_name: str, agent_params: AgentParams) -> None:
         # logging
         self.logger = agent_params.logger
         self.logger.info(

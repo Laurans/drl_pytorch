@@ -4,8 +4,11 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
+from core.utils.params import ModelParams
+
+
 class Model(nn.Module):
-    def __init__(self, model_name, model_params):
+    def __init__(self, model_name: str, model_params: ModelParams) -> None:
         super(Model, self).__init__()
 
         self.logger = model_params.logger
@@ -25,9 +28,9 @@ class Model(nn.Module):
     def _init_weights(self):
         raise NotImplementedError("not implemented init weights")
 
-    def reset(self):
+    def reset(self) -> None:
         self._init_weights()
         self.logger.warning("(Re)Initialize model")
 
-    def print_model(self):
+    def print_model(self) -> None:
         self.logger.info(self)

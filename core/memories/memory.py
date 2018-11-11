@@ -1,7 +1,12 @@
 from collections import namedtuple, deque
 
+from core.utils.params import MemoryParams
+from numpy import float64, ndarray
+from typing import Union
+
+
 class Memory:
-    def __init__(self, memory_name, memory_params):
+    def __init__(self, memory_name: str, memory_params: MemoryParams) -> None:
 
         self.logger = memory_params.logger
         self.logger.info(
@@ -23,7 +28,14 @@ class Memory:
     def sample(self, batch_size):
         raise NotImplementedError("not implemented sample method in memory")
 
-    def append(self, observation, action, reward, next_observation, terminal):
+    def append(
+        self,
+        observation: ndarray,
+        action: int,
+        reward: float,
+        next_observation: ndarray,
+        terminal: bool,
+    ) -> None:
         self.recent_observations.append(observation)
         self.recent_observations.append(terminal)
 

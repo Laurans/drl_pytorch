@@ -4,13 +4,25 @@ from collections import namedtuple, deque
 import numpy as np
 import torch
 
+from core.utils.params import MemoryParams
+from numpy import float64, ndarray
+from typing import Union
+
+
 class ReplayBuffer(Memory):
-    def __init__(self, memory_params):
+    def __init__(self, memory_params: MemoryParams) -> None:
         super(ReplayBuffer, self).__init__("Replay Buffer", memory_params)
 
         random.seed(memory_params.seed)
 
-    def append(self, observation, action, reward, next_observation, terminal):
+    def append(
+        self,
+        observation: ndarray,
+        action: int,
+        reward: float,
+        next_observation: ndarray,
+        terminal: bool,
+    ) -> None:
         super(ReplayBuffer, self).append(
             observation, action, reward, next_observation, terminal
         )

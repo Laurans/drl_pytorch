@@ -8,7 +8,7 @@ import torch.optim as optim
 
 
 class Params:
-    def __init__(self, verbose):
+    def __init__(self, verbose: int) -> None:
         self.verbose = 1  # 0 (no set) | 1 (info) | 2 (debug)
 
         # signature
@@ -39,7 +39,7 @@ class Params:
 
 
 class ModelParams(Params):
-    def __init__(self, verbose):
+    def __init__(self, verbose: int) -> None:
         super(ModelParams, self).__init__(verbose)
 
         self.hist_len = 1
@@ -47,7 +47,7 @@ class ModelParams(Params):
 
 
 class MemoryParams(Params):
-    def __init__(self, verbose):
+    def __init__(self, verbose: int) -> None:
         super(MemoryParams, self).__init__(verbose)
 
         self.memory_size = int(1e5)
@@ -58,7 +58,7 @@ class MemoryParams(Params):
 
 
 class AgentParams(Params):
-    def __init__(self, verbose):
+    def __init__(self, verbose: int) -> None:
         super(AgentParams, self).__init__(verbose)
 
         self.model_params = ModelParams(verbose)
