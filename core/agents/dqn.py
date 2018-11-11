@@ -12,7 +12,6 @@ class MLPAgent(Agent):
         self.action_dim = action_size
         self.model_params.state_shape = state_size
         self.model_params.action_dim = self.action_dim
-        
 
         # Q-Network
         self.model = model_prototype(self.model_params).to(self.device)

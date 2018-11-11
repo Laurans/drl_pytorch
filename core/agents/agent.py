@@ -10,7 +10,7 @@ class Agent:
 
         self.device = agent_params.device
         self.use_cuda = agent_params.use_cuda
-        
+
         self.training = agent_params.training
 
         # hyperparameters

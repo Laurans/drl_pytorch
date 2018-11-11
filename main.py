@@ -14,10 +14,10 @@ from core.utils.params import AgentParams
 from core.models.dqn import QNetwork
 
 agent = MLPAgent(
-    agent_params = AgentParams(verbose=1),
-    state_size=env.observation_space.shape, 
+    agent_params=AgentParams(verbose=1),
+    state_size=env.observation_space.shape,
     action_size=env.action_space.n,
-    model_prototype = QNetwork
+    model_prototype=QNetwork,
 )
 
 state = env.reset()

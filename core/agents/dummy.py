@@ -4,8 +4,8 @@ import random
 
 class DummyAgent(Agent):
     def __init__(self, agent_params, state_size, action_size):
-        super(DummyAgent, self).__init__('Dummy', agent_params)
-        
+        super(DummyAgent, self).__init__("Dummy", agent_params)
+
         self.state_size = state_size
         self.action_size = action_size
         self.seed = random.seed(agent_params.seed)
