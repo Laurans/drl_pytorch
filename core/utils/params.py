@@ -3,6 +3,8 @@ import visdom
 import torch
 
 from .logger import loggerConfig
+from collections import namedtuple
+import torch.optim as optim
 
 
 class Params:
@@ -41,7 +43,18 @@ class ModelParams(Params):
         super(ModelParams, self).__init__(verbose)
 
         self.hist_len = 1
-        self.hidden_dim = 16
+        self.hidden_dim = 64
+
+
+class MemoryParams(Params):
+    def __init__(self, verbose):
+        super(MemoryParams, self).__init__(verbose)
+
+        self.memory_size = int(1e5)
+        self.experience = namedtuple(
+            "Experience",
+            field_names=["state", "action", "reward", "next_state", "done"],
+        )
 
 
 class AgentParams(Params):
@@ -49,6 +62,7 @@ class AgentParams(Params):
         super(AgentParams, self).__init__(verbose)
 
         self.model_params = ModelParams(verbose)
+        self.memory_params = MemoryParams(verbose)
 
         self.training = True
 
@@ -56,17 +70,23 @@ class AgentParams(Params):
         self.steps = 100000
         self.gamma = 0.99
         self.clip_grad = 1.0
-        self.lr = 1e-4
+        self.lr = 5e-4
         self.eval_freq = 2500
         self.eval_steps = 1000
         self.test_nepisodes = 1
 
         self.learn_start = 500
-        self.batch_size = 32
+        self.learn_every = 4
+        self.batch_size = 64
         self.valid_size = 250
         self.eps_start = 1
-        self.eps_end = 0.3
-        self.eps_decay = 50000
+        self.eps_end = 0.01
+        self.eps_decay = 0.995
         self.eps_eval = 0.0
         self.target_model_update = 1000
         self.action_repetition = 1
+
+        self.optim = optim.Adam
+        self.tau = 1e-3
+
+        self.memory_params.window_length = self.model_params.hist_len - 1

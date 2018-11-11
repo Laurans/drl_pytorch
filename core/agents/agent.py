@@ -7,6 +7,7 @@ class Agent:
         )
 
         self.model_params = agent_params.model_params
+        self.memory_params = agent_params.memory_params
 
         self.device = agent_params.device
         self.use_cuda = agent_params.use_cuda
@@ -25,12 +26,15 @@ class Agent:
         self.learn_start = agent_params.learn_start
         self.batch_size = agent_params.batch_size
         self.valid_size = agent_params.valid_size
-        self.eps_start = agent_params.eps_start
+        self.eps = agent_params.eps_start
         self.eps_end = agent_params.eps_end
         self.eps_decay = agent_params.eps_decay
         self.eps_eval = agent_params.eps_eval
         self.target_model_update = agent_params.target_model_update
         self.action_repetition = agent_params.action_repetition
+        self.optim = agent_params.optim
+        self.tau = agent_params.tau
+        self.learn_every = agent_params.learn_every
 
         self.counter_steps = 0
 
