@@ -7,13 +7,11 @@ from collections import deque
 
 env = gym.make("LunarLander-v2")
 env.seed(0)
-#print("State shape: ", env.observation_space.shape)
-#print("Number of actions: ", env.action_space.n)
 
 
 from core.agents.dqn import MLPAgent
 from core.utils.params import AgentParams
-from core.models.dqn_mlp import QNetwork
+from core.models.dqn import QNetwork
 
 agent = MLPAgent(
     agent_params = AgentParams(verbose=1),
@@ -21,14 +19,13 @@ agent = MLPAgent(
     action_size=env.action_space.n,
     model_prototype = QNetwork
 )
-"""
+
 state = env.reset()
 for j in range(200):
     action = agent.act(state)
     state, reward, done, _ = env.step(action)
-    #print(reward)
+    print(reward)
     if done:
         break
 
 env.close()
-"""
