@@ -4,7 +4,10 @@
 
 * docker
 * nvidia-docker
-* pipenv
+
+For python on the host machine, you can use pipenv with pyenv
+* [pyenv installer](https://github.com/pyenv/pyenv-installer), [more about pyenv](https://github.com/pyenv/pyenv)
+* [pipenv](https://pipenv.readthedocs.io/en/latest/)
 
 
 ### To build Docker image
@@ -16,7 +19,10 @@ docker build - < Dockerfile
 
 ### Python libraries on the host machine
 
-Python libraries are listed in `pipfile`. You can install it by using `pipenv install`.
+Python libraries are listed in `Pipfile`. You can install it by using 
+```
+pipenv install
+```
 
 
 
@@ -24,10 +30,12 @@ Python libraries are listed in `pipfile`. You can install it by using `pipenv in
 
 ### Visdom
 
-On the host machine, in another terminal session, you need to run `python -m visdom.server` if you want to visualize the training
+On the host machine, in another terminal session, if you want to visualize the training, you need to run 
+```
+python -m visdom.server
+``` 
 
 ### Docker 
-
 ```
 docker run --runtime=nvidia -it --rm -v $PWD:/workdir -w /workdir --network=host --user="$(id -u):$(id -g)" drlnd_image python3 ./main.py
 ```
