@@ -5,7 +5,7 @@ def loggerConfig(log_file, verbose):
     logger = logging.getLogger()
     logger.propagate = 0
     if not logger.handlers:
-        formatter = logging.Formatter("[%(levelname)-8s] (%(funcName)s) %(message)s")
+        formatter = logging.Formatter("[%(levelname)-8s] (%(module)s - %(funcName)s) %(message)s")
 
         fileHandler = logging.FileHandler(log_file, "w")
         fileHandler.setFormatter(formatter)
