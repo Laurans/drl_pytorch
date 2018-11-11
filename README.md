@@ -19,5 +19,5 @@ On the host machine, you need to run `python -m visdom.server`
 ### Docker 
 
 ```
-docker run --runtime=nvidia -it --rm -v $PWD:/workdir -w /workdir --network=host drlnd_image python3 ./main.py
+docker run --runtime=nvidia -it --rm -v $PWD:/workdir -w /workdir --network=host --user="$(id -u):$(id -g)" drlnd_image python3 ./main.py
 ```
