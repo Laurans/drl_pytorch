@@ -47,8 +47,10 @@ for i_episode in range(1, n_episodes+1):
     print('\rEpisode {}\tAverage Score: {:.2f}'.format(i_episode, np.mean(scores_window)), end="")
 
     if i_episode % 100 == 0:
-        print('Episode {}\tAverage Score: {:.2f}'.format(i_episode, np.mean(scores_window)))
+        print()
+        agent.logger.info('Episode {}\tAverage Score: {:.2f}'.format(i_episode, np.mean(scores_window)))
 
     if np.mean(scores_window)>=200.0:
-        print('Environment solved in {:d} episodes!\tAverage Score: {:.2f}'.format(i_episode-100, np.mean(scores_window)))
+        print()
+        agent.logger.info('Environment solved in {:d} episodes!\tAverage Score: {:.2f}'.format(i_episode-100, np.mean(scores_window)))
         break
