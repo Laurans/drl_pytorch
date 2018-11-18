@@ -2,7 +2,9 @@ import logging
 from logging import Logger
 
 
-def loggerConfig(log_file: str, verbose: int, namelogger: str = 'drl_pytorch') -> Logger:
+def loggerConfig(
+    log_file: str, verbose: int, namelogger: str = "drl_pytorch"
+) -> Logger:
     logger = logging.getLogger(namelogger)
     logger.propagate = 0
     if not logger.handlers:
