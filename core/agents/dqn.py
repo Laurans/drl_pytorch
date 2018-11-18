@@ -44,6 +44,8 @@ class MLPAgent(Agent):
 
         self.counter_steps = 0
         self.seed = random.seed(agent_params.seed)
+        self.logger.debug(f"seed: {self.seed}")
+        np.random.seed(agent_params.seed)
 
     def step(
         self,

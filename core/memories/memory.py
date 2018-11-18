@@ -3,6 +3,7 @@ from collections import namedtuple, deque
 from core.utils.params import MemoryParams
 from numpy import float64, ndarray
 from typing import Union
+import random
 
 
 class Memory:
@@ -24,6 +25,8 @@ class Memory:
         self.device = memory_params.device
 
         self.memory = deque(maxlen=self.memory_size)
+
+        self.seed = random.seed(memory_params.seed)
 
     def sample(self, batch_size):
         raise NotImplementedError("not implemented sample method in memory")

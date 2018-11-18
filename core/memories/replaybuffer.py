@@ -13,8 +13,6 @@ class ReplayBuffer(Memory):
     def __init__(self, memory_params: MemoryParams) -> None:
         super(ReplayBuffer, self).__init__("Replay Buffer", memory_params)
 
-        random.seed(memory_params.seed)
-
     def append(
         self,
         observation: ndarray,
