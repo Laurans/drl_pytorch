@@ -13,7 +13,7 @@ For python on the host machine, you can use pipenv with pyenv
 ### To build Docker image
 
 ```
-docker build - < Dockerfile
+docker build -t drlnd_image .
 ```
 
 
@@ -37,5 +37,10 @@ python -m visdom.server
 
 ### Docker 
 ```
-docker run --runtime=nvidia -it --rm -v $PWD:/workdir -w /workdir --network=host --user="$(id -u):$(id -g)" drlnd_image python3 ./main.py
+docker run --runtime=nvidia -it --rm -v $PWD:/workdir -w /workdir --network=host --user="$(id -u):$(id -g)" drlnd_image python ./main.py
+```
+
+### Run test
+```
+docker run --runtime=nvidia -it --rm -v $PWD:/workdir -w /workdir --network=host --user="$(id -u):$(id -g)" drlnd_image python setup.py pytest
 ```
