@@ -1,11 +1,9 @@
 import logging
+from logging import Logger
 
 
-from logging import RootLogger
-
-
-def loggerConfig(log_file: str, verbose: int) -> RootLogger:
-    logger = logging.getLogger()
+def loggerConfig(log_file: str, verbose: int, namelogger: str = 'drl_pytorch') -> Logger:
+    logger = logging.getLogger(namelogger)
     logger.propagate = 0
     if not logger.handlers:
         formatter = logging.Formatter(
@@ -25,6 +23,8 @@ def loggerConfig(log_file: str, verbose: int) -> RootLogger:
         elif verbose >= 1:
             logger.setLevel(logging.INFO)
         else:
-            logger.setLevel(logging.CRITICAL)
+            streamhandler.setLevel(logging.CRITICAL)
+            fileHandler.setLevel(logging.INFO)
+            logger.setLevel(logging.INFO)
 
     return logger
