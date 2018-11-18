@@ -9,9 +9,9 @@ from core.utils.params import ModelParams
 from torch import Tensor
 
 
-class QNetwork(Model):
+class QNetwork_MLP(Model):
     def __init__(self, model_params: ModelParams) -> None:
-        super(QNetwork, self).__init__("QNetwork MLP", model_params)
+        super(QNetwork_MLP, self).__init__("QNetwork MLP", model_params)
 
         self.fc1 = nn.Linear(
             np.prod(self.input_dims_0 * self.input_dims_1), self.hidden_dim

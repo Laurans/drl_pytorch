@@ -1,4 +1,4 @@
-from core.models import QNetwork
+from core.models import QNetwork_MLP
 from core.utils.params import ModelParams
 import numpy as np
 import pytest
@@ -14,7 +14,7 @@ class TestMLPModel(unittest.TestCase):
         par.hidden_dim = 2
         par.seed = 23
 
-        self.net = QNetwork(model_params=par)
+        self.net = QNetwork_MLP(model_params=par)
 
     def test_model_initialization_reproductible(self):
         weight = list(self.net.parameters())[0].cpu().detach().numpy()

@@ -1,2 +1,2 @@
-from core.models.dqn import QNetwork
+from core.models.dqn_mlp import QNetwork_MLP
 from core.models.model import Model

@@ -9,16 +9,16 @@ env = gym.make("LunarLander-v2")
 env.seed(0)
 
 
-from core.agents.dqn import MLPAgent
-from core.utils.params import AgentParams
-from core.models.dqn import QNetwork
-from core.memories.replaybuffer import ReplayBuffer
+from core.agents import MLPAgent
+from core.utils import AgentParams
+from core.models import QNetwork_MLP
+from core.memories import ReplayBuffer
 
 agent = MLPAgent(
-    agent_params=AgentParams(verbose=1),
+    agent_params=AgentParams(verbose=0),
     state_size=env.observation_space.shape,
     action_size=env.action_space.n,
-    model_prototype=QNetwork,
+    model_prototype=QNetwork_MLP,
     memory_prototype=ReplayBuffer,
 )
 

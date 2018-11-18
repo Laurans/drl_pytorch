@@ -8,7 +8,6 @@ import numpy as np
 from core.memories.replaybuffer import ReplayBuffer
 
 
-from core.models.dqn import QNetwork
 from core.utils.params import AgentParams
 from core.models.model import Model
 from core.memories.memory import Memory
