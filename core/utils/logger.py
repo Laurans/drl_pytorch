@@ -20,11 +20,11 @@ def loggerConfig(log_file: str, verbose: int) -> RootLogger:
         streamhandler.setFormatter(formatter)
         logger.addHandler(streamhandler)
 
-    if verbose >= 2:
-        logger.setLevel(logging.DEBUG)
-    elif verbose >= 1:
-        logger.setLevel(logging.INFO)
-    else:
-        logger.setLevel(logging.NOTSET)
+        if verbose >= 2:
+            logger.setLevel(logging.DEBUG)
+        elif verbose >= 1:
+            logger.setLevel(logging.INFO)
+        else:
+            logger.setLevel(logging.CRITICAL)
 
     return logger

@@ -9,7 +9,7 @@ import torch.optim as optim
 
 class Params:
     def __init__(self, verbose: int) -> None:
-        self.verbose = 1  # 0 (no set) | 1 (info) | 2 (debug)
+        self.verbose = verbose  # 0 (no set) | 1 (info) | 2 (debug)
 
         # signature
         self.machine = "machine"
@@ -26,7 +26,9 @@ class Params:
         # logging config
         self.log_name = self.root_dir + "/logs/" + self.refs + ".log"
         self.logger = loggerConfig(self.log_name, self.verbose)
-        self.logger.info(":===================================:")
+        self.logger.info(
+            f":===================================: {self.logger.getEffectiveLevel()}"
+        )
 
         if self.visualize:
             self.vis = visdom.Visdom()
@@ -45,6 +47,9 @@ class ModelParams(Params):
         self.hist_len = 1
         self.hidden_dim = 64
 
+        self.state_shape = None
+        self.action_dim = None
+
 
 class MemoryParams(Params):
     def __init__(self, verbose: int) -> None:
@@ -55,6 +60,8 @@ class MemoryParams(Params):
             "Experience",
             field_names=["state", "action", "reward", "next_state", "done"],
         )
+
+        self.window_length = 0
 
 
 class AgentParams(Params):
@@ -67,7 +74,7 @@ class AgentParams(Params):
         self.training = True
 
         # hyperparameters
-        self.steps = 100000
+        self.steps = 100_000
         self.gamma = 0.99
         self.clip_grad = 1.0
         self.lr = 5e-4
