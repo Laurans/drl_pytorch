@@ -32,11 +32,16 @@ class TestReplayBufferMethods(unittest.TestCase):
     def test_get_historic_state(self):
         pass
 
+    def test_same_sample(self):
+        sample = self.memory.sample(4)[1].cpu().detach().numpy().flatten()
+        self.assertEqual([1,64,4,576], list(sample))
+
     def test_sample_size(self):
         self.assertEqual(4, len(self.memory.sample(4)[0]))
 
     def test_sample_return_sarsd(self):
-        self.assertEqual(5, len(self.memory.sample(1)))
+        self.assertEqual(5, len(self.memory.sample(1)), msg="Must return (state, action, reward, next_state, done) tuple")
+
 
     def test_missing_params_memory(self):
         with pytest.raises(TypeError):
