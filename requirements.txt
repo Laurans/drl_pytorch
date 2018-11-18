@@ -1,0 +1,10 @@
+cython
+gym
+box2d
+visdom
+tqdm
+ipdb
+monkeytype
+pytest
+pytest-cov
+pytest-mccabe
