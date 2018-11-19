@@ -15,6 +15,8 @@ from numpy import float64, ndarray
 from typing import Tuple, Type, Union
 from numpy import float64, int64, ndarray
 
+import pdb
+
 
 class MLPAgent(Agent):
     def __init__(
@@ -42,9 +44,10 @@ class MLPAgent(Agent):
         self.memory = memory_prototype(self.memory_params)
 
         self.counter_steps = 0
-        self.seed = random.seed(agent_params.seed)
+        self.seed = agent_params.seed
         self.logger.debug(f"seed: {self.seed}")
-        np.random.seed(agent_params.seed)
+        random.seed(self.seed)
+        np.random.seed(self.seed)
 
     def step(
         self,
@@ -58,23 +61,22 @@ class MLPAgent(Agent):
         self.memory.append(state, action, float(reward), next_state, done)
 
         if (
-            self.counter_steps >= self.learn_start
+            self.training
+            and self.counter_steps >= self.learn_start
             and self.counter_steps % self.learn_every == 0
         ):
             self.learn()
 
         self.counter_steps += 1
 
-    def act(self, state: ndarray) -> int:
-        observation = state
+    def act(self, observation: ndarray) -> int:
 
         if self.training and self.counter_steps < self.learn_start:
             action = random.randrange(self.action_dim)
-
         elif self.training and self.counter_steps >= self.learn_start:
             action = self._epsilon_greedy(observation)
         else:
-            action = self._get_action(observation)
+            action, _ = self.get_raw_actions(observation)
 
         return action
 
@@ -93,6 +95,9 @@ class MLPAgent(Agent):
             loss = F.mse_loss(Q_expected, Q_targets)
             self.optimizer.zero_grad()
             loss.backward()
+            for param in self.model.parameters():
+                param.grad.data.clamp_(-self.clip_grad, self.clip_grad)
+
             self.optimizer.step()
 
             self._soft_update_target_model()
@@ -112,15 +117,16 @@ class MLPAgent(Agent):
         self.eps = max(self.eps_end, self.eps * self.eps_decay)
 
     def _epsilon_greedy(self, observation: ndarray) -> Union[int64, int]:
+        
         if np.random.uniform() < self.eps:
             action = random.randrange(self.action_dim)
 
         else:
-            action = self._get_action(observation)
+            action, _ = self.get_raw_actions(observation)
 
         return action
 
-    def _get_action(self, observation: ndarray) -> int64:
+    def get_raw_actions(self, observation: ndarray) -> int64:
         observation = (
             torch.from_numpy(np.array(observation)).unsqueeze(0).to(self.device)
         )
@@ -128,8 +134,8 @@ class MLPAgent(Agent):
             q_values = self.model(observation).data
 
         if self.use_cuda:
-            action = np.argmax(q_values.cpu().numpy())
+            q_values = q_values.cpu().numpy()
         else:
-            action = np.argmax(q_values.numpy())
+            q_values = q_values.numpy()
 
-        return action
+        return np.argmax(q_values), q_values
