@@ -1,6 +1,7 @@
 import os
 import visdom
 import torch
+import imageio
 
 from .logger import loggerConfig
 from collections import namedtuple
@@ -8,16 +9,19 @@ import torch.optim as optim
 
 
 class Params:
-    def __init__(self, verbose: int) -> None:
+    def __init__(
+        self, verbose: int, machine: str = "machine", timestamp: str = "2238"
+    ) -> None:
         self.verbose = verbose  # 0 (no set) | 1 (info) | 2 (debug)
 
         # signature
-        self.machine = "machine"
-        self.timestamp = "181109"
+        self.machine = machine
+        self.timestamp = timestamp
 
         #
         self.seed = 123
-        self.visualize = False
+        self.visualize = True
+        self.env_render = True
 
         # prefix for saving
         self.refs = self.machine + "_" + self.timestamp
@@ -26,9 +30,6 @@ class Params:
         # logging config
         self.log_name = self.root_dir + "/logs/" + self.refs + ".log"
         self.logger = loggerConfig(self.log_name, self.verbose)
-        self.logger.info(
-            f":===================================: {self.logger.getEffectiveLevel()}"
-        )
 
         if self.visualize:
             self.vis = visdom.Visdom()
@@ -74,26 +75,44 @@ class AgentParams(Params):
         self.training = True
 
         # hyperparameters
-        self.steps = 100_000
         self.gamma = 0.99
         self.clip_grad = 1.0
         self.lr = 5e-4
-        self.eval_freq = 2500
-        self.eval_steps = 1000
-        self.test_nepisodes = 1
 
         self.learn_start = 500
-        self.learn_every = 4
+        self.learn_every = 1
         self.batch_size = 64
-        self.valid_size = 250
+
         self.eps_start = 1
         self.eps_end = 0.01
         self.eps_decay = 0.995
-        self.eps_eval = 0.0
         self.target_model_update = 1000
-        self.action_repetition = 1
 
         self.optim = optim.Adam
         self.tau = 1e-3
+        self.update_every = 4
 
         self.memory_params.window_length = self.model_params.hist_len - 1
+
+
+class MonitorParams(Params):
+    def __init__(self, verbose):
+        super(MonitorParams, self).__init__(verbose)
+
+        self.env_name = "LunarLander-v2"
+        self.n_episodes = 1000
+        self.max_steps_in_episode = 1000
+
+        self.report_freq_by_episodes = 100
+        self.eval_freq_by_episodes = 50
+        self.eval_steps = 1000
+
+        self.seed = 0
+
+        self.reward_solved_criteria = 200
+
+        self.agent_params = AgentParams(verbose)
+
+        if self.env_render:
+            self.img_dir = self.root_dir + "/imgs/"
+            self.imsave = imageio.imwrite

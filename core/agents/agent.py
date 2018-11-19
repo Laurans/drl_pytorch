@@ -16,25 +16,22 @@ class Agent:
         self.use_cuda = agent_params.use_cuda
 
         self.training = agent_params.training
+        self.visualize = agent_params.visualize
+        if self.visualize:
+            self.refs = agent_params.refs
+            self.visdom = agent_params.vis
 
         # hyperparameters
-        self.steps = agent_params.steps
         self.gamma = agent_params.gamma
         self.clip_grad = agent_params.clip_grad
         self.lr = agent_params.lr
-        self.eval_freq = agent_params.eval_freq
-        self.eval_steps = agent_params.eval_steps
-        self.test_nepisodes = agent_params.test_nepisodes
 
         self.learn_start = agent_params.learn_start
         self.batch_size = agent_params.batch_size
-        self.valid_size = agent_params.valid_size
         self.eps = agent_params.eps_start
         self.eps_end = agent_params.eps_end
         self.eps_decay = agent_params.eps_decay
-        self.eps_eval = agent_params.eps_eval
         self.target_model_update = agent_params.target_model_update
-        self.action_repetition = agent_params.action_repetition
         self.optim = agent_params.optim
         self.tau = agent_params.tau
         self.learn_every = agent_params.learn_every
