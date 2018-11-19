@@ -3,8 +3,10 @@ gym
 box2d
 visdom
 tqdm
-ipdb
+pdbpp
 monkeytype
 pytest
 pytest-cov
 pytest-mccabe
+coloredlogs
+imageio
