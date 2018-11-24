@@ -5,6 +5,17 @@ from logging import Logger
 def loggerConfig(
     log_file: str, verbose: int, namelogger: str = "drl_pytorch"
 ) -> Logger:
+    """Config a logger to stream and write in file according to the level.
+
+    Args:
+        log_file (str): Log file to write log in it
+        verbose (int): verbosity -> 2 for debug (stream + file), 1 for info (stream + file), 0 to shut stream log
+        namelogger (str, optional): Defaults to "drl_pytorch". Logger name to get unique logger
+
+    Returns:
+        Logger: Logger object
+    """
+
     logger = logging.getLogger(namelogger)
     fmt = "[%(levelname)-8s] (%(module)s - %(funcName)s) %(message)s"
 

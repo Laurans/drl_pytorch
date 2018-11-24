@@ -13,10 +13,21 @@ class Params:
         self,
         verbose: int,
         machine: str = "machine",
-        timestamp: str = "2238",
+        timestamp: str = "",
         visualize: bool = False,
         env_render: bool = False,
     ) -> None:
+    """Object params that contains all the common variables between modules like logger or GPU device
+    
+    Args:
+        verbose (int): level of verbosity
+        machine (str, optional): Defaults to "machine". Machine name where the algorithm is run. Used to create logging filename signature
+        timestamp (str, optional): Defaults to "". Time where the algorithm is run. Used to create logging filename signature
+        visualize (bool, optional): Defaults to False. Set connection to visdom dashboard if true
+        env_render (bool, optional): Defaults to False. Save evaluation images in directory to used later
+    
+    """
+
         self.verbose = verbose  # 0 (no set) | 1 (info) | 2 (debug)
 
         # signature
@@ -47,9 +58,20 @@ class Params:
 
 
 class ModelParams(Params):
+
     def __init__(
-        self, verbose: int, machine: str = "default", timestamp: str = "0000"
+        self, verbose: int, machine: str = "machine", timestamp: str = ""
     ) -> None:
+    """Model global parameters
+    
+    Args:
+        verbose (int): Level of verbosity
+        machine (str, optional): Defaults to "machine". Machine name where the algorithm is run. Used to create logging filename signature
+        timestamp (str, optional): Defaults to "". Time where the algorithm is run. Used to create logging filename signature
+    
+    """
+
+
         super(ModelParams, self).__init__(verbose, machine=machine, timestamp=timestamp)
 
         self.hist_len = 1
@@ -60,9 +82,19 @@ class ModelParams(Params):
 
 
 class MemoryParams(Params):
+
     def __init__(
-        self, verbose: int, machine: str = "default", timestamp: str = "0000"
+        self, verbose: int, machine: str = "machine", timestamp: str = ""
     ) -> None:
+    """Memory global parameters
+    
+    Args:
+        verbose (int): Level of verbosity
+        machine (str, optional): Defaults to "default". Machine name where the algorithm is run. Used to create logging filename signature
+        timestamp (str, optional): Defaults to "". Time where the algorithm is run. Used to create logging filename signature
+    
+    """
+
         super(MemoryParams, self).__init__(
             verbose, machine=machine, timestamp=timestamp
         )
@@ -77,9 +109,18 @@ class MemoryParams(Params):
 
 
 class AgentParams(Params):
+
     def __init__(
-        self, verbose: int, machine: str = "default", timestamp: str = "0000"
+        self, verbose: int, machine: str = "default", timestamp: str = ""
     ) -> None:
+    """Agent global parameters. It contains Model and Memory Parameters
+    
+    Args:
+        verbose (int): Level of verbosity
+        machine (str, optional): Defaults to "default". Machine name where the algorithm is run. Used to create logging filename signature
+        timestamp (str, optional): Defaults to "". Time where the algorithm is run. Used to create logging filename signature
+    """
+
         super(AgentParams, self).__init__(verbose, machine=machine, timestamp=timestamp)
 
         self.model_params = ModelParams(verbose, machine=machine, timestamp=timestamp)
@@ -109,14 +150,25 @@ class AgentParams(Params):
 
 
 class MonitorParams(Params):
+
     def __init__(
         self,
         verbose: int,
         machine: str = "machine",
-        timestamp: str = "2238",
+        timestamp: str = "",
         visualize: bool = False,
         env_render: bool = False,
     ):
+    """Monitor global parameters. It contains an AgentParams object and set visualisation options
+    
+    Args:
+        verbose (int): Level of verbosity
+        machine (str, optional): Defaults to "default". Machine name where the algorithm is run. Used to create logging filename signature
+        timestamp (str, optional): Defaults to "". Time where the algorithm is run. Used to create logging filename signature
+        visualize (bool, optional): Defaults to False. Set connection to visdom dashboard if true
+        env_render (bool, optional): Defaults to False. Save evaluation images in directory to used later
+    """
+
         super(MonitorParams, self).__init__(
             verbose, machine, timestamp, visualize, env_render
         )
