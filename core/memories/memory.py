@@ -10,9 +10,7 @@ class Memory:
     def __init__(self, memory_name: str, memory_params: MemoryParams) -> None:
 
         self.logger = memory_params.logger
-        self.logger.info(
-            "-----------------------------[ {} ]------------------".format(memory_name)
-        )
+
 
         self.window_length = memory_params.window_length
 
@@ -26,7 +24,11 @@ class Memory:
 
         self.memory = deque(maxlen=self.memory_size)
 
-        self.seed = random.seed(memory_params.seed)
+        self.seed = memory_params.seed
+        random.seed(self.seed)
+        self.logger.info(
+            f"-----------------------------[ {memory_name} w/ seed {self.seed} ]------------------"
+        )
 
     def sample(self, batch_size):
         raise NotImplementedError("not implemented sample method in memory")

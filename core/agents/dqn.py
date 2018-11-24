@@ -44,8 +44,6 @@ class MLPAgent(Agent):
         self.memory = memory_prototype(self.memory_params)
 
         self.counter_steps = 0
-        self.seed = agent_params.seed
-        self.logger.debug(f"seed: {self.seed}")
         random.seed(self.seed)
         np.random.seed(self.seed)
 

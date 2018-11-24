@@ -5,9 +5,6 @@ class Agent:
     def __init__(self, agent_name: str, agent_params: AgentParams) -> None:
         # logging
         self.logger = agent_params.logger
-        self.logger.info(
-            "-----------------------------[ {} ]------------------".format(agent_name)
-        )
 
         self.model_params = agent_params.model_params
         self.memory_params = agent_params.memory_params
@@ -37,6 +34,12 @@ class Agent:
         self.learn_every = agent_params.learn_every
 
         self.counter_steps = 0
+
+        self.seed = agent_params.seed
+
+        self.logger.info(
+            f"-----------------------------[ {agent_name} w/ seed {self.seed} ]------------------"
+        )
 
     def step(self, state, action, reward, next_state, done):
         raise NotImplementedError("not implemented step function in your agent")
