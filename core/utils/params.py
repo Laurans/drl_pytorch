@@ -10,7 +10,12 @@ import torch.optim as optim
 
 class Params:
     def __init__(
-        self, verbose: int, machine: str = "machine", timestamp: str = "2238"
+        self,
+        verbose: int,
+        machine: str = "machine",
+        timestamp: str = "2238",
+        visualize: bool = False,
+        env_render: bool = False,
     ) -> None:
         self.verbose = verbose  # 0 (no set) | 1 (info) | 2 (debug)
 
@@ -20,8 +25,8 @@ class Params:
 
         #
         self.seed = 123
-        self.visualize = True
-        self.env_render = True
+        self.visualize = visualize
+        self.env_render = env_render
 
         # prefix for saving
         self.refs = self.machine + "_" + self.timestamp
@@ -42,8 +47,10 @@ class Params:
 
 
 class ModelParams(Params):
-    def __init__(self, verbose: int) -> None:
-        super(ModelParams, self).__init__(verbose)
+    def __init__(
+        self, verbose: int, machine: str = "default", timestamp: str = "0000"
+    ) -> None:
+        super(ModelParams, self).__init__(verbose, machine=machine, timestamp=timestamp)
 
         self.hist_len = 1
         self.hidden_dim = 64
@@ -53,8 +60,12 @@ class ModelParams(Params):
 
 
 class MemoryParams(Params):
-    def __init__(self, verbose: int) -> None:
-        super(MemoryParams, self).__init__(verbose)
+    def __init__(
+        self, verbose: int, machine: str = "default", timestamp: str = "0000"
+    ) -> None:
+        super(MemoryParams, self).__init__(
+            verbose, machine=machine, timestamp=timestamp
+        )
 
         self.memory_size = int(1e5)
         self.experience = namedtuple(
@@ -66,11 +77,13 @@ class MemoryParams(Params):
 
 
 class AgentParams(Params):
-    def __init__(self, verbose: int) -> None:
-        super(AgentParams, self).__init__(verbose)
+    def __init__(
+        self, verbose: int, machine: str = "default", timestamp: str = "0000"
+    ) -> None:
+        super(AgentParams, self).__init__(verbose, machine=machine, timestamp=timestamp)
 
-        self.model_params = ModelParams(verbose)
-        self.memory_params = MemoryParams(verbose)
+        self.model_params = ModelParams(verbose, machine=machine, timestamp=timestamp)
+        self.memory_params = MemoryParams(verbose, machine=machine, timestamp=timestamp)
 
         self.training = True
 
@@ -83,7 +96,7 @@ class AgentParams(Params):
         self.learn_every = 1
         self.batch_size = 64
 
-        self.eps_start = 1
+        self.eps_start = 1.0
         self.eps_end = 0.01
         self.eps_decay = 0.995
         self.target_model_update = 1000
@@ -96,22 +109,31 @@ class AgentParams(Params):
 
 
 class MonitorParams(Params):
-    def __init__(self, verbose):
-        super(MonitorParams, self).__init__(verbose)
+    def __init__(
+        self,
+        verbose: int,
+        machine: str = "machine",
+        timestamp: str = "2238",
+        visualize: bool = False,
+        env_render: bool = False,
+    ):
+        super(MonitorParams, self).__init__(
+            verbose, machine, timestamp, visualize, env_render
+        )
 
         self.env_name = "LunarLander-v2"
-        self.n_episodes = 1000
+        self.n_episodes = 2000
         self.max_steps_in_episode = 1000
 
         self.report_freq_by_episodes = 100
-        self.eval_freq_by_episodes = 50
+        self.eval_freq_by_episodes = 100
         self.eval_steps = 1000
 
         self.seed = 0
 
         self.reward_solved_criteria = 200
 
-        self.agent_params = AgentParams(verbose)
+        self.agent_params = AgentParams(verbose, machine=machine, timestamp=timestamp)
 
         if self.env_render:
             self.img_dir = self.root_dir + "/imgs/"
