@@ -5,7 +5,7 @@ from core.models import QNetwork_MLP
 from core.memories import ReplayBuffer
 
 monitor = Monitor(
-    monitor_param=MonitorParams(verbose=1),
+    monitor_param=MonitorParams(verbose=1, visualize=True, env_render=True),
     agent_prototype=MLPAgent,
     model_prototype=QNetwork_MLP,
     memory_prototype=ReplayBuffer,
