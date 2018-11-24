@@ -43,7 +43,7 @@ class Monitor:
 
         self.agent = agent_prototype(
             agent_params=monitor_param.agent_params,
-            state_size=state_shape,
+            state_shape=state_shape,
             action_size=action_size,
             model_prototype=model_prototype,
             memory_prototype=memory_prototype,

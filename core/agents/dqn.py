@@ -22,7 +22,7 @@ class MLPAgent(Agent):
     def __init__(
         self,
         agent_params: AgentParams,
-        state_size: Tuple[int],
+        state_shape: Tuple[int],
         action_size: int,
         model_prototype: Type[Model],
         memory_prototype: Type[Memory],
@@ -30,7 +30,7 @@ class MLPAgent(Agent):
         super(MLPAgent, self).__init__("MLP Agent", agent_params)
 
         self.action_dim = action_size
-        self.model_params.state_shape = state_size
+        self.model_params.state_shape = state_shape
         self.model_params.action_dim = self.action_dim
 
         # Q-Network
@@ -57,21 +57,11 @@ class MLPAgent(Agent):
     ) -> None:
 
         self.memory.append(state, action, float(reward), next_state, done)
-
-        if (
-            self.training
-            and self.counter_steps >= self.learn_start
-            and self.counter_steps % self.learn_every == 0
-        ):
-            self.learn()
-
         self.counter_steps += 1
 
     def act(self, observation: ndarray) -> int:
 
-        if self.training and self.counter_steps < self.learn_start:
-            action = random.randrange(self.action_dim)
-        elif self.training and self.counter_steps >= self.learn_start:
+        if self.training:
             action = self._epsilon_greedy(observation)
         else:
             action, _ = self.get_raw_actions(observation)
@@ -79,7 +69,7 @@ class MLPAgent(Agent):
         return action
 
     def learn(self) -> None:
-        if self.counter_steps >= self.learn_start:
+        if len(self.memory) >= self.batch_size:
             experiences = self.memory.sample(self.batch_size)
             states, actions, rewards, next_states, dones = experiences
 
@@ -99,6 +89,7 @@ class MLPAgent(Agent):
             self.optimizer.step()
 
             self._soft_update_target_model()
+            return loss.cpu().detach().numpy()
 
     def _update_target_model(self) -> None:
         self.target_model.load_state_dict(self.model.state_dict())
@@ -115,7 +106,6 @@ class MLPAgent(Agent):
         self.eps = max(self.eps_end, self.eps * self.eps_decay)
 
     def _epsilon_greedy(self, observation: ndarray) -> Union[int64, int]:
-        
         if np.random.uniform() < self.eps:
             action = random.randrange(self.action_dim)
 

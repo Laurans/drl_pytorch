@@ -13,10 +13,6 @@ class Agent:
         self.use_cuda = agent_params.use_cuda
 
         self.training = agent_params.training
-        self.visualize = agent_params.visualize
-        if self.visualize:
-            self.refs = agent_params.refs
-            self.visdom = agent_params.vis
 
         # hyperparameters
         self.gamma = agent_params.gamma
