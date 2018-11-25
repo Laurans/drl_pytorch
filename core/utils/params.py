@@ -144,6 +144,7 @@ class AgentParams(Params):
 
         self.memory_params.window_length = self.model_params.hist_len - 1
 
+        self.model_dir = self.root_dir + "/models/"
 
 
 class MonitorParams(Params):
