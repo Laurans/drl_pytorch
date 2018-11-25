@@ -31,7 +31,6 @@ class Monitor:
         self.seed = monitor_param.seed
         self.report_freq = monitor_param.report_freq_by_episodes
         self.reward_solved_criteria = monitor_param.reward_solved_criteria
-        self.seed = monitor_param.seed
 
         self.logger.info("-----------------------------[ Env ]------------------")
         self.logger.info(
@@ -63,8 +62,12 @@ class Monitor:
             "training_rolling_loss",
             "training_epsilon",
             "training_rolling_steps_avg",
+            "text_elapsed_time",
         ]:
-            self.summaries[summary] = {"log": []}
+            if "text" in summary:
+                self.summaries[summary] = {"log": "", "type": "text"}
+            else:
+                self.summaries[summary] = {"log": [], "type": "line"}
 
         self.counter_steps = 0
 
@@ -135,6 +138,27 @@ class Monitor:
                     f"nununununununununununununu Resume Training @ Step {self.counter_steps}  nununununununununununununu"
                 )
 
+            if self.visualize:
+                self._visual()
+
+            if resolved:
+                self.logger.info(f"+-+-+-+-+-+-+-+ Saving model ... +-+-+-+-+-+-+-+")
+                self.agent.save()
+
+                self.logger.warning(
+                    f"nununununununununununununu Evaluating @ Step {self.counter_steps}  nununununununununununununu"
+                )
+                self.eval_agent()
+                if self.visualize:
+                    self._visual()
+
+                self.logger.warning(
+                    f"nununununununununununununu Testing Agent  nununununununununununununu"
+                )
+                self.test_agent()
+
+                break
+
     def _report_log(
         self, i_episode, resolved, start_time, rewards_window, steps_window, loss
     ):
@@ -170,6 +194,10 @@ class Monitor:
                         [i_episode, float(loss)]
                     )
 
+                self.summaries["text_elapsed_time"][
+                    "log"
+                ] = f"Elapsed time \t{datetime.now()-start_time}"
+
     def eval_agent(self):
         self.agent.training = False
 
@@ -186,7 +214,7 @@ class Monitor:
 
             eval_action, q_values = self.agent.get_raw_actions(state)
             next_state, reward, done, _ = self.env.step(eval_action)
-            self._render(eval_step)
+            self._render(eval_step, "eval")
             self._show_values(q_values)
 
             eval_episode_reward += reward
@@ -222,10 +250,25 @@ class Monitor:
                     f"@ Step {self.counter_steps}; {key}: {self.summaries[key]['log'][-1][1]}"
                 )
 
-    def _render(self, frame_ind):
+    def test_agent(self, checkpoint=""):
+        self.agent.training = False
+        self.agent.load(checkpoint)
+        self.env_render = True
+        step = 0
+        for i in range(self.test_n_episodes):
+            state = self.env.reset()
+            done = False
+            while not done:
+                action = self.agent.act(state)
+                next_state, reward, done, _ = self.env.step(action)
+                self._render(step, "test")
+                state = next_state
+                step += 1
+
+    def _render(self, frame_ind, subdir):
         frame = self.env.render(mode="rgb_array")
         if self.env_render:
-            frame_name = self.img_dir + f"{frame_ind:04d}.jpg"
+            frame_name = self.img_dir + f"{subdir}/{frame_ind:05d}.jpg"
             self.imsave(frame_name, frame)
 
         if self.visualize:
@@ -250,11 +293,21 @@ class Monitor:
 
     def _visual(self):
         for key in self.summaries.keys():
-            data = np.array(self.summaries[key]["log"])
-            self.visdom.line(
-                X=data[:, 0],
-                Y=data[:, 1],
-                env=self.refs,
-                win=f"win_{key}",
-                opts=dict(title=key, markers=True),
-            )
+            if self.summaries[key]["type"] == "line":
+                data = np.array(self.summaries[key]["log"])
+                if data.ndim < 2:
+                    continue
+                self.visdom.line(
+                    X=data[:, 0],
+                    Y=data[:, 1],
+                    env=self.refs,
+                    win=f"win_{key}",
+                    opts=dict(title=key, markers=True),
+                )
+            elif self.summaries[key]["type"] == "text":
+                self.visdom.text(
+                    self.summaries[key]["log"],
+                    env=self.refs,
+                    win=f"win_{key}",
+                    opts=dict(title=key),
+                )
