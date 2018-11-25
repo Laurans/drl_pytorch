@@ -21,8 +21,10 @@ class Monitor:
             self.imsave = monitor_param.imsave
             self.img_dir = monitor_param.img_dir
 
-        self.n_episodes = monitor_param.n_episodes
+        self.train_n_episodes = monitor_param.train_n_episodes
+        self.test_n_episodes = monitor_param.test_n_episodes
         self.max_steps_in_episode = monitor_param.max_steps_in_episode
+        self.eval_during_training = monitor_param.eval_during_training
         self.eval_freq = monitor_param.eval_freq_by_episodes
         self.eval_steps = monitor_param.eval_steps
 
@@ -58,13 +60,40 @@ class Monitor:
             "eval_reward_avg",
             "eval_n_episodes_solved",
             "training_rolling_reward_avg",
-            "training_last_loss",
+            "training_rolling_loss",
             "training_epsilon",
             "training_rolling_steps_avg",
         ]:
             self.summaries[summary] = {"log": []}
 
         self.counter_steps = 0
+
+    def _train_on_episode(self):
+        state = self.env.reset()
+        episode_steps = 0
+        episode_reward = 0.0
+        losses = deque(maxlen=100)
+
+        for t in range(self.max_steps_in_episode):
+            action = self.agent.act(state)
+            next_state, reward, done, _ = self.env.step(action)
+            self.agent.step(state, action, reward, next_state, done)
+
+            if self.agent.t_step == 0:
+                loss = self.agent.learn()
+                if loss is not None:
+                    losses.append(loss)
+
+            state = next_state
+
+            episode_reward += reward
+            episode_steps += 1
+            self.counter_steps += 1
+
+            if done:
+                break
+
+        return episode_reward, episode_steps, np.mean(losses)
 
     def train(self):
         self.agent.training = True
@@ -74,34 +103,14 @@ class Monitor:
 
         start_time = datetime.now()
 
-        n_episodes_solved = 0
         rewards_window = deque(maxlen=100)
         steps_window = deque(maxlen=100)
 
         resolved = False
 
-        for i_episode in range(1, self.n_episodes + 1):
-            state = self.env.reset()
-            episode_steps = 0
-            episode_reward = 0.0
+        for i_episode in range(1, self.train_n_episodes + 1):
 
-            for t in range(self.max_steps_in_episode):
-                action = self.agent.act(state)
-                next_state, reward, done, _ = self.env.step(action)
-                self.agent.step(state, action, reward, next_state, done)
-
-                if (self.counter_steps+1) % self.agent.learn_every == 0:
-                    loss = self.agent.learn()
-
-                state = next_state
-
-                episode_reward += reward
-                episode_steps += 1
-                self.counter_steps += 1
-
-                if done:
-                    n_episodes_solved += 1
-                    break
+            episode_reward, episode_steps, loss = self._train_on_episode()
 
             self.agent.update_epsilon()
             rewards_window.append(episode_reward)
@@ -111,20 +120,11 @@ class Monitor:
                 resolved = True
 
             self._report_log(
-                i_episode,
-                resolved,
-                start_time,
-                rewards_window,
-                steps_window,
-                n_episodes_solved,
-                loss
+                i_episode, resolved, start_time, rewards_window, steps_window, loss
             )
 
             # evaluation & checkpointing
-            if (
-                self.counter_steps > self.agent.learn_start
-                and i_episode % self.eval_freq == 0
-            ):
+            if self.eval_during_training and i_episode % self.eval_freq == 0:
                 self.logger.warning(
                     f"nununununununununununununu Evaluating @ Step {self.counter_steps}  nununununununununununununu"
                 )
@@ -136,21 +136,14 @@ class Monitor:
                 )
 
     def _report_log(
-        self,
-        i_episode,
-        resolved,
-        start_time,
-        rewards_window,
-        steps_window,
-        n_episodes_solved,
-        loss
+        self, i_episode, resolved, start_time, rewards_window, steps_window, loss
     ):
         if i_episode % self.report_freq == 0 or resolved:
-            if not resolved:
-                self.logger.info(
-                    f"\033[1m Reporting @ Episode {i_episode} | @ Step {self.counter_steps}"
-                )
-            else:
+            self.logger.info(
+                f"\033[1m Reporting @ Episode {i_episode} | @ Step {self.counter_steps}"
+            )
+
+            if resolved:
                 self.logger.warning(f"Environment solved in {i_episode} episodes!")
             self.logger.info(
                 f"Training Stats: elapsed time:\t{ datetime.now()-start_time}"
@@ -160,26 +153,22 @@ class Monitor:
             self.logger.info(
                 f"Training Stats: avg steps by episode:\t{np.mean(steps_window)}"
             )
-            self.logger.info(f"Training Stats: nepisodes_solved:\t{n_episodes_solved}")
-            self.logger.info(
-                f"Training Stats: repisodes_solved:\t{n_episodes_solved/self.n_episodes}"
-            )
-            self.logger.info(
-                f"Training Stats: last loss:\t{loss}"
-            )
+            self.logger.info(f"Training Stats: last loss:\t{loss}")
 
-        if self.visualize:
-            self.summaries["training_epsilon"]["log"].append(
-                [i_episode, self.agent.eps]
-            )
-            self.summaries["training_rolling_reward_avg"]["log"].append(
-                [i_episode, np.mean(rewards_window)]
-            )
-            self.summaries["training_rolling_steps_avg"]["log"].append(
-                [i_episode, np.mean(steps_window)]
-            )
-            if loss is not None:
-                self.summaries['training_last_loss']['log'].append([i_episode, float(loss)])
+            if self.visualize:
+                self.summaries["training_epsilon"]["log"].append(
+                    [i_episode, self.agent.eps]
+                )
+                self.summaries["training_rolling_reward_avg"]["log"].append(
+                    [i_episode, np.mean(rewards_window)]
+                )
+                self.summaries["training_rolling_steps_avg"]["log"].append(
+                    [i_episode, np.mean(steps_window)]
+                )
+                if loss is not None:
+                    self.summaries["training_rolling_loss"]["log"].append(
+                        [i_episode, float(loss)]
+                    )
 
     def eval_agent(self):
         self.agent.training = False
@@ -196,9 +185,6 @@ class Monitor:
         while eval_step < self.eval_steps:
 
             eval_action, q_values = self.agent.get_raw_actions(state)
-            self.logger.debug(
-                f"{eval_step}, state {state}, Q values {q_values}, Action {eval_action}"
-            )
             next_state, reward, done, _ = self.env.step(eval_action)
             self._render(eval_step)
             self._show_values(q_values)
@@ -230,13 +216,11 @@ class Monitor:
             [self.counter_steps, eval_nepisodes_solved]
         )
 
-        if self.visualize:
-            self._visual()
-
         for key in self.summaries.keys():
-            self.logger.info(
-                f"@ Step {self.counter_steps}; {key}: {self.summaries[key]['log'][-1][1]}"
-            )
+            if self.summaries[key]["type"] == "line":
+                self.logger.info(
+                    f"@ Step {self.counter_steps}; {key}: {self.summaries[key]['log'][-1][1]}"
+                )
 
     def _render(self, frame_ind):
         frame = self.env.render(mode="rgb_array")

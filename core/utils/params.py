@@ -35,7 +35,7 @@ class Params:
         self.timestamp = timestamp
 
         #
-        self.seed = 123
+        self.seed = 0
         self.visualize = visualize
         self.env_render = env_render
 
@@ -171,12 +171,14 @@ class MonitorParams(Params):
         )
 
         self.env_name = "LunarLander-v2"
-        self.n_episodes = 2000
+        self.train_n_episodes = 2000
         self.max_steps_in_episode = 1000
 
         self.report_freq_by_episodes = 100
+        self.eval_during_training = True
         self.eval_freq_by_episodes = 100
         self.eval_steps = 1000
+        self.test_n_episodes = 3
 
         self.seed = 0
 
