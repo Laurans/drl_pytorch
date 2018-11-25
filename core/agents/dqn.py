@@ -43,7 +43,7 @@ class MLPAgent(Agent):
         # Memory
         self.memory = memory_prototype(self.memory_params)
 
-        self.counter_steps = 0
+        self.t_step = 0
         random.seed(self.seed)
         np.random.seed(self.seed)
 
@@ -57,7 +57,7 @@ class MLPAgent(Agent):
     ) -> None:
 
         self.memory.append(state, action, float(reward), next_state, done)
-        self.counter_steps += 1
+        self.t_step = (self.t_step + 1) % self.learn_every
 
     def act(self, observation: ndarray) -> int:
 

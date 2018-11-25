@@ -134,7 +134,7 @@ class AgentParams(Params):
         self.lr = 5e-4
 
         self.learn_start = 500
-        self.learn_every = 1
+        self.learn_every = 4
         self.batch_size = 64
 
         self.eps_start = 1.0
