@@ -87,9 +87,21 @@ class MLPAgent(Agent):
                 param.grad.data.clamp_(-self.clip_grad, self.clip_grad)
 
             self.optimizer.step()
-
             self._soft_update_target_model()
+
             return loss.cpu().detach().numpy()
+
+    def save(self, checkpoint=""):
+        if checkpoint == "":
+            checkpoint = f"{self.model_dir}{self.agent_name}.pth"
+
+        torch.save(self.model.state_dict(), checkpoint)
+
+    def load(self, checkpoint=""):
+        if checkpoint == "":
+            checkpoint = f"{self.model_dir}{self.agent_name}.pth"
+
+        self.model.load_state_dict(torch.load(checkpoint))
 
     def _update_target_model(self) -> None:
         self.target_model.load_state_dict(self.model.state_dict())

@@ -33,6 +33,9 @@ class Agent:
 
         self.seed = agent_params.seed
 
+        self.agent_name = agent_name
+        self.model_dir = agent_params.model_dir
+
         self.logger.info(
             f"-----------------------------[ {agent_name} w/ seed {self.seed} ]------------------"
         )
@@ -45,3 +48,9 @@ class Agent:
 
     def learn(self, experiences):
         raise NotImplementedError("not implemented learn function in your agent")
+
+    def save(self, checkpoint):
+        raise NotImplementedError("not implemented save function in your agent")
+
+    def load(self, checkpoint):
+        raise NotImplementedError("not implemented load function in your agent")

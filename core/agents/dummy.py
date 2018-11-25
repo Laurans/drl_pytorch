@@ -17,3 +17,9 @@ class DummyAgent(Agent):
 
     def learn(self, experiences):
         pass
+
+    def save(self, checkpoint):
+        pass
+
+    def load(self, checkpoint):
+        pass
