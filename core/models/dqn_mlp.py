@@ -24,13 +24,10 @@ class QNetwork_MLP(Model):
 
     def _init_weights(self) -> None:
         self.fc1.weight.data = nn.init.kaiming_normal_(
-            self.fc1.weight.data, mode="fan_out", nonlinearity="relu"
+            self.fc1.weight.data, nonlinearity="relu"
         )
         self.fc2.weight.data = nn.init.kaiming_normal_(
-            self.fc2.weight.data, mode="fan_out", nonlinearity="relu"
-        )
-        self.fc3.weight.data = nn.init.kaiming_normal_(
-            self.fc3.weight.data, mode="fan_out", nonlinearity="relu"
+            self.fc2.weight.data, nonlinearity="relu"
         )
 
     def forward(self, x: Tensor) -> Tensor:
