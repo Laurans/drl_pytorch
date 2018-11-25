@@ -24,7 +24,7 @@ class Model(nn.Module):
         self.output_dims = model_params.action_dim
 
         self.logger.info(
-            f"-----------------------------[ {model_name} w/ seed {self.seed} on device {self.device} ]------------------".format(model_name)
+            f"-----------------------------[ {model_name} w/ seed {self.seed} on device {self.device} ]------------------"
         )
 
     def _init_weights(self):
