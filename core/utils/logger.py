@@ -34,13 +34,17 @@ def loggerConfig(
 
         if verbose >= 2:
             logger.setLevel(logging.DEBUG)
-            coloredlogs.install(logger=logger, fmt=fmt)
+            coloredlogs.install(logger=logger, fmt=fmt, level="DEBUG")
+
         elif verbose >= 1:
             logger.setLevel(logging.INFO)
-            coloredlogs.install(logger=logger, fmt=fmt)
+            coloredlogs.install(logger=logger, fmt=fmt, level="INFO")
         else:
             streamhandler.setLevel(logging.CRITICAL)
             fileHandler.setLevel(logging.INFO)
             logger.setLevel(logging.INFO)
+
+        logger.warning(f"Log file created at {log_file}")
+        logger.debug(f"verbose {verbose}")
 
     return logger
