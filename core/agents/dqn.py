@@ -128,8 +128,9 @@ class MLPAgent(Agent):
 
     def get_raw_actions(self, observation: ndarray) -> int64:
         observation = (
-            torch.from_numpy(np.array(observation)).unsqueeze(0).to(self.device)
+            torch.from_numpy(np.array(observation)).unsqueeze(0).float().to(self.device)
         )
+        
         with torch.no_grad():
             q_values = self.model(observation).data
 
@@ -139,3 +140,11 @@ class MLPAgent(Agent):
             q_values = q_values.numpy()
 
         return np.argmax(q_values), q_values
+
+    def get_model_weights_as_img(self):
+        list_weights = []
+        for key, tensor in self.model.state_dict().items():
+            if "weight" in key:
+                list_weights.append((key, tensor.cpu().detach().numpy()))
+
+        return list_weights
