@@ -112,3 +112,4 @@ venv.bak/
 .history
 
 monkeytype.sqlite3
+*.mp4
