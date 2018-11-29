@@ -10,3 +10,5 @@ pytest-cov
 pytest-mccabe
 coloredlogs
 imageio
+mlagents==0.4.0
+pyyaml
