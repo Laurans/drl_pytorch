@@ -1,0 +1,13 @@
+0:
+  agent_type: dqn
+  env_type: gym
+  game: LunarLander-v2
+  model_type: dqn_mlp
+  memory_type: replaybuffer
+
+1:
+  agent_type: dqn
+  env_type: unity
+  game: envs/Banana_Linux_NoVis/Banana.x86_64
+  model_type: dqn_mlp
+  memory_type: replaybuffer

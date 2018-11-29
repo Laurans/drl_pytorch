@@ -7,6 +7,10 @@ from .logger import loggerConfig
 from collections import namedtuple
 import torch.optim as optim
 
+import yaml
+
+import pdb
+
 
 class Params:
     def __init__(
@@ -16,6 +20,7 @@ class Params:
         timestamp: str = "",
         visualize: bool = False,
         env_render: bool = False,
+        config_number: int = 0,
     ) -> None:
         """Object params that contains all the common variables between modules like logger or GPU device
         
@@ -56,6 +61,14 @@ class Params:
         self.dtype = torch.cuda.FloatTensor if self.use_cuda else torch.FloatTensor
         self.device = torch.device("cuda:0" if self.use_cuda else "cpu")
 
+        with open("config.yaml") as f:
+            config = yaml.safe_load(f)[config_number]
+            self.agent_type = config["agent_type"]
+            self.env_type = config["env_type"]
+            self.game = config["game"]
+            self.model_type = config["model_type"]
+            self.memory_type = config["memory_type"]
+
 
 class ModelParams(Params):
     def __init__(
@@ -73,7 +86,7 @@ class ModelParams(Params):
         super(ModelParams, self).__init__(verbose, machine=machine, timestamp=timestamp)
 
         self.hist_len = 1
-        self.hidden_dim = 64
+        self.hidden_dim = 128
 
         self.state_shape = None
         self.action_dim = None
@@ -147,6 +160,21 @@ class AgentParams(Params):
         self.model_dir = self.root_dir + "/models/"
 
 
+class EnvParams(Params):
+    def __init__(
+        self, verbose: int, machine: str = "default", timestamp: str = ""
+    ) -> None:
+        """Agent global parameters. It contains Model and Memory Parameters
+        
+        Args:
+            verbose (int): Level of verbosity
+            machine (str, optional): Defaults to "default". Machine name where the algorithm is run. Used to create logging filename signature
+            timestamp (str, optional): Defaults to "". Time where the algorithm is run. Used to create logging filename signature
+        """
+
+        super(EnvParams, self).__init__(verbose, machine=machine, timestamp=timestamp)
+
+
 class MonitorParams(Params):
     def __init__(
         self,
@@ -170,8 +198,7 @@ class MonitorParams(Params):
             verbose, machine, timestamp, visualize, env_render
         )
 
-        self.env_name = "LunarLander-v2"
-        self.train_n_episodes = 2000
+        self.train_n_episodes = 10000
         self.max_steps_in_episode = 1000
 
         self.report_freq_by_episodes = 100
@@ -185,6 +212,7 @@ class MonitorParams(Params):
         self.reward_solved_criteria = 200
 
         self.agent_params = AgentParams(verbose, machine=machine, timestamp=timestamp)
+        self.env_params = EnvParams(verbose, machine=machine, timestamp=timestamp)
 
         if self.env_render:
             self.img_dir = self.root_dir + "/imgs/"
