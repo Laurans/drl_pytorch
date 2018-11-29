@@ -1,6 +1,7 @@
 from core.envs.env import Env
 import gym
 
+
 class GymEnv(Env):
     def __init__(self, env_params):
         super(GymEnv, self).__init__("Gym", env_params)
@@ -22,4 +23,4 @@ class GymEnv(Env):
         return next_state, reward, done
 
     def render(self):
-        return self.env.render(mode='rgb_array')
+        return self.env.render(mode="rgb_array")

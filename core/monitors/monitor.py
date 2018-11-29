@@ -7,7 +7,12 @@ import pdb
 
 class Monitor:
     def __init__(
-        self, monitor_param, agent_prototype, model_prototype, memory_prototype, env_prototype
+        self,
+        monitor_param,
+        agent_prototype,
+        model_prototype,
+        memory_prototype,
+        env_prototype,
     ):
         self.logger = monitor_param.logger
         self.logger.info("-----------------------------[ Monitor ]------------------")
@@ -33,8 +38,10 @@ class Monitor:
         self.reward_solved_criteria = monitor_param.reward_solved_criteria
 
         self.logger.info("-----------------------------[ Env ]------------------")
-        self.logger.info(f"Creating {{{monitor_param.env_type} | {monitor_param.game}}} w/ seed {self.seed}")
-        
+        self.logger.info(
+            f"Creating {{{monitor_param.env_type} | {monitor_param.game}}} w/ seed {self.seed}"
+        )
+
         self.env = env_prototype(monitor_param.env_params)
 
         state_shape = self.env.get_state_shape()
@@ -61,7 +68,7 @@ class Monitor:
             "training_epsilon",
             "training_rolling_steps_avg",
             "text_elapsed_time",
-            "eval_state_values"
+            "eval_state_values",
         ]:
             if "text" in summary:
                 self.summaries[summary] = {"log": "", "type": "text"}
@@ -270,7 +277,7 @@ class Monitor:
                 step += 1
 
     def _render(self, frame_ind, subdir):
-        
+
         if self.env_render:
             frame = self.env.render()
             frame_name = self.img_dir + f"{subdir}/{frame_ind:05d}.jpg"

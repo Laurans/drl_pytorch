@@ -130,7 +130,7 @@ class MLPAgent(Agent):
         observation = (
             torch.from_numpy(np.array(observation)).unsqueeze(0).float().to(self.device)
         )
-        
+
         with torch.no_grad():
             q_values = self.model(observation).data
 

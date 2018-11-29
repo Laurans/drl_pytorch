@@ -1,6 +1,7 @@
 from core.envs.env import Env
 from unityagents import UnityEnvironment
 
+
 class UnityEnv(Env):
     def __init__(self, env_params):
         super(UnityEnv, self).__init__("Unity", env_params)
@@ -26,7 +27,7 @@ class UnityEnv(Env):
         next_state = self.env_info.vector_observations[0]
         reward = self.env_info.rewards[0]
         done = self.env_info.local_done[0]
-        return next_state, reward, done 
+        return next_state, reward, done
 
     def render(self):
         return np.squeeze(self.env_info.visual_observations[0])

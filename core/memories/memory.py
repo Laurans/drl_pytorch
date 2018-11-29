@@ -11,7 +11,6 @@ class Memory:
 
         self.logger = memory_params.logger
 
-
         self.window_length = memory_params.window_length
 
         self.recent_observations = deque(maxlen=self.window_length)
