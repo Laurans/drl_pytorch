@@ -207,6 +207,7 @@ class Monitor:
         eval_episode_reward = 0
         eval_episode_reward_log = []
         eval_episode_steps_log = []
+        eval_state_value_log = []
 
         state = self.env.reset()
 
@@ -217,6 +218,7 @@ class Monitor:
             self._render(eval_step, "eval")
             self._show_values(q_values)
 
+            eval_state_value_log.append([eval_step, np.mean(q_values)])
             eval_episode_reward += reward
             eval_episode_steps += 1
 
@@ -243,6 +245,8 @@ class Monitor:
         self.summaries["eval_n_episodes_solved"]["log"].append(
             [self.counter_steps, eval_nepisodes_solved]
         )
+
+        self.summaries["eval_state_values"]["log"] = eval_state_value_log
 
         for key in self.summaries.keys():
             if self.summaries[key]["type"] == "line":
