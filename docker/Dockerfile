@@ -11,7 +11,8 @@ RUN apt-get update && apt-get install -y \
         xvfb \
         wget \ 
         fluxbox\
-        wmctrl && apt-get clean
+        wmctrl\
+        git && apt-get clean
 
 COPY bootstrap.sh /
 COPY requirements.txt .
