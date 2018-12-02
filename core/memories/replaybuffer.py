@@ -11,7 +11,9 @@ from typing import Union
 
 class ReplayBuffer(Memory):
     def __init__(self, memory_params: MemoryParams) -> None:
-        super(ReplayBuffer, self).__init__("Replay Buffer", memory_params)
+        self.combined_with_last = memory_params.combined_with_last
+        prefix = "Combined " if self.combined_with_last else ""
+        super(ReplayBuffer, self).__init__(f"{prefix}Replay Buffer", memory_params)
 
     def append(
         self,
@@ -42,6 +44,15 @@ class ReplayBuffer(Memory):
                 rewards.append(e.reward)
                 next_states.append(e.next_state)
                 dones.append(e.done)
+
+        if self.combined_with_last:
+            last_experience = self.memory[-1]
+
+            states.append(last_experience.state)
+            actions.append(last_experience.action)
+            rewards.append(last_experience.reward)
+            next_states.append(last_experience.next_state)
+            dones.append(last_experience.done)
 
         states = torch.from_numpy(np.vstack(states)).float().to(self.device)
         actions = torch.from_numpy(np.vstack(actions)).long().to(self.device)

@@ -83,7 +83,7 @@ class ModelParams(Params):
 
         super(ModelParams, self).__init__(**args)
 
-        self.hist_len = 1
+        self.hist_len = 4
         self.hidden_dim = [256, 1024, 256]
 
         self.state_shape = None
@@ -111,6 +111,7 @@ class MemoryParams(Params):
 
         self.window_length = 0
 
+        self.combined_with_last = True
 
 class AgentParams(Params):
     def __init__(self, args) -> None:
@@ -134,8 +135,8 @@ class AgentParams(Params):
         self.clip_grad = 1.0
 
         self.learn_start = 500
-        self.learn_every = 4
-        self.batch_size = 64
+        self.learn_every = 1
+        self.batch_size = 128
 
         self.eps_start = 1.0
         self.eps_end = 0.01
@@ -144,7 +145,7 @@ class AgentParams(Params):
         self.optim = optim.SGD
         self.optim_params = {"lr": 5e-5, "momentum": 0.9}
         self.tau = 1e-3
-        self.update_every = 4
+        self.update_every = 1
 
         self.memory_params.window_length = self.model_params.hist_len - 1
 
@@ -209,7 +210,7 @@ class MonitorParams(Params):
 
         self.seed = 0
 
-        self.reward_solved_criteria = 200
+        self.reward_solved_criteria = 14
 
         self.agent_params = AgentParams(args)
         self.env_params = EnvParams(args)
