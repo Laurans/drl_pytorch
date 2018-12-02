@@ -279,17 +279,19 @@ class Monitor:
 
         if self.env_render:
             frame = self.env.render()
-            frame_name = self.img_dir + f"{subdir}/{frame_ind:05d}.jpg"
-            self.imsave(frame_name, frame)
+            if frame is not None:
+                frame_name = self.img_dir + f"{subdir}/{frame_ind:05d}.jpg"
+                self.imsave(frame_name, frame)
 
         if self.visualize:
             frame = self.env.render()
-            self.visdom.image(
-                np.transpose(frame, (2, 0, 1)),
-                env=self.refs,
-                win="state",
-                opts=dict(title="render"),
-            )
+            if frame is not None:
+                self.visdom.image(
+                    np.transpose(frame, (2, 0, 1)),
+                    env=self.refs,
+                    win="state",
+                    opts=dict(title="render"),
+                )
 
     def _show_values(self, values):
         if self.visualize:

@@ -1,5 +1,6 @@
 from core.envs.env import Env
 from unityagents import UnityEnvironment
+import numpy as np
 
 
 class UnityEnv(Env):
@@ -9,6 +10,8 @@ class UnityEnv(Env):
         self.env = UnityEnvironment(file_name=self.game)
         self.brain_name = self.env.brain_names[0]
         self.brain = self.env.brains[self.brain_name]
+
+        self.pixels = env_params.pixels
 
     def get_state_shape(self):
         self.env_info = self.env.reset(train_mode=True)[self.brain_name]
@@ -30,4 +33,7 @@ class UnityEnv(Env):
         return next_state, reward, done
 
     def render(self):
-        return np.squeeze(self.env_info.visual_observations[0])
+        if self.pixels:
+            return np.squeeze(self.env_info.visual_observations[0])
+        else:
+            return None
