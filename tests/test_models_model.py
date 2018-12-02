@@ -6,7 +6,7 @@ from core.utils.params import ModelParams
 
 class TestModel(unittest.TestCase):
     def setUp(self):
-        self.model_params = ModelParams(0)
+        self.model_params = ModelParams({"verbose": 0})
         self.model = Model("test_model", self.model_params)
 
     def test_missing_params_memory(self):

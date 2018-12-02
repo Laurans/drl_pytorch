@@ -7,7 +7,7 @@ import numpy as np
 
 class TestMemory(unittest.TestCase):
     def setUp(self):
-        self.memory_params = MemoryParams(0)
+        self.memory_params = MemoryParams({"verbose": 0})
         self.memory = Memory("test_mem", self.memory_params)
 
     def test_missing_params_memory(self):
