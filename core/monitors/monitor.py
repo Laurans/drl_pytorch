@@ -203,7 +203,6 @@ class Monitor:
             ] = f"Elapsed time \t{datetime.now()-start_time}"
 
             self._visual()
-            self._visual_weights()
 
     def eval_agent(self):
         self.agent.training = False
@@ -325,13 +324,3 @@ class Monitor:
                     opts=dict(title=key),
                 )
 
-    def _visual_weights(self):
-        weights_matrix = self.agent.get_model_weights_as_img()
-
-        for key, tensor in weights_matrix:
-            self.visdom.heatmap(
-                tensor,
-                env=self.refs + "_weights",
-                win=f"win_{key}",
-                opts=dict(title=key),
-            )
