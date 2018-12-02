@@ -74,6 +74,7 @@ class MLPAgent(Agent):
 
     def learn(self) -> None:
         if len(self.memory) >= self.batch_size:
+            self.model.train()
             experiences = self.memory.sample(self.batch_size)
             states, actions, rewards, next_states, dones = experiences
 
@@ -136,6 +137,7 @@ class MLPAgent(Agent):
         )
 
         with torch.no_grad():
+            self.model.eval()
             q_values = self.model(observation).data
 
         if self.use_cuda:
@@ -144,11 +146,3 @@ class MLPAgent(Agent):
             q_values = q_values.numpy()
 
         return np.argmax(q_values), q_values
-
-    def get_model_weights_as_img(self):
-        list_weights = []
-        for key, tensor in self.model.state_dict().items():
-            if "weight" in key:
-                list_weights.append((key, tensor.cpu().detach().numpy()))
-
-        return list_weights
