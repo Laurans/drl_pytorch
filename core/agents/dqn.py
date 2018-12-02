@@ -36,7 +36,7 @@ class MLPAgent(Agent):
         # Q-Network
         self.model = model_prototype(self.model_params).to(self.device)
         self.target_model = model_prototype(self.model_params).to(self.device)
-        self.optimizer = self.optim(self.model.parameters(), lr=self.lr)
+        self.optimizer = self.optim(self.model.parameters(), **self.optim_params)
 
         self._update_target_model()
 

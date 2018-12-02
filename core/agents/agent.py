@@ -17,14 +17,13 @@ class Agent:
         # hyperparameters
         self.gamma = agent_params.gamma
         self.clip_grad = agent_params.clip_grad
-        self.lr = agent_params.lr
+        self.optim_params = agent_params.optim_params
 
         self.learn_start = agent_params.learn_start
         self.batch_size = agent_params.batch_size
         self.eps = agent_params.eps_start
         self.eps_end = agent_params.eps_end
         self.eps_decay = agent_params.eps_decay
-        self.target_model_update = agent_params.target_model_update
         self.optim = agent_params.optim
         self.tau = agent_params.tau
         self.learn_every = agent_params.learn_every

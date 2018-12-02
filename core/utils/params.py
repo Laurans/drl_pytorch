@@ -132,7 +132,6 @@ class AgentParams(Params):
         # hyperparameters
         self.gamma = 0.99
         self.clip_grad = 1.0
-        self.lr = 5e-4
 
         self.learn_start = 500
         self.learn_every = 4
@@ -141,9 +140,9 @@ class AgentParams(Params):
         self.eps_start = 1.0
         self.eps_end = 0.01
         self.eps_decay = 0.995
-        self.target_model_update = 1000
 
-        self.optim = optim.Adam
+        self.optim = optim.SGD
+        self.optim_params = {"lr": 5e-5, "momentum": 0.9}
         self.tau = 1e-3
         self.update_every = 4
 
