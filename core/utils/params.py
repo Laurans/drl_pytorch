@@ -84,7 +84,7 @@ class ModelParams(Params):
         super(ModelParams, self).__init__(**args)
 
         self.hist_len = 1
-        self.hidden_dim = 128
+        self.hidden_dim = [256, 1024, 256]
 
         self.state_shape = None
         self.action_dim = None
