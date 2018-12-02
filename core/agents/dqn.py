@@ -56,10 +56,14 @@ class MLPAgent(Agent):
         done: bool,
     ) -> None:
 
-        self.memory.append(state, action, float(reward), next_state, done)
+        s = self.memory.get_recent_states(state).flatten()
+        s2 = self.memory.get_recent_states(state, next_state).flatten()
+        self.memory.append(s, action, float(reward), s2, done)
+        self.memory.append_recent(state, done)
         self.t_step = (self.t_step + 1) % self.learn_every
 
     def act(self, observation: ndarray) -> int:
+        observation = self.memory.get_recent_states(observation).flatten()
 
         if self.training:
             action = self._epsilon_greedy(observation)

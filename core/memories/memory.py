@@ -5,6 +5,8 @@ from numpy import float64, ndarray
 from typing import Union
 import random
 
+import numpy as np
+
 
 class Memory:
     def __init__(self, memory_name: str, memory_params: MemoryParams) -> None:
@@ -32,21 +34,36 @@ class Memory:
     def sample(self, batch_size):
         raise NotImplementedError("not implemented sample method in memory")
 
-    def append(
-        self,
-        observation: ndarray,
-        action: int,
-        reward: float,
-        next_observation: ndarray,
-        terminal: bool,
-    ) -> None:
+    def append_recent(self, observation: ndarray, terminal: bool) -> None:
         self.recent_observations.append(observation)
-        self.recent_observations.append(terminal)
+        self.recent_terminals.append(terminal)
 
-    def get_recent_state(self, current_observation):
-        past_observations = list(past_observations)
-        past_observation.append(current_observation)
-        # TODO zeroed observation
+    def get_recent_states(self, current_observation, next_observation=None):
+        if current_observation.ndim == 1:
+            current_observation = current_observation.reshape(1, -1)
+        past_observations = list()
+        if next_observation is not None:
+            if next_observation.ndim == 1:
+                next_observation = next_observation.reshape(1, -1)
+            past_observations.append(next_observation)
+        past_observations.append(current_observation)
+
+        flag = False
+        for state, terminal in zip(
+            list(self.recent_observations)[::-1], list(self.recent_terminals)[::-1]
+        ):
+            if terminal or flag:
+                past_observations.append(np.zeros_like(current_observation))
+                flag = True
+            else:
+                past_observations.append(state)
+
+        while len(past_observations) < self.window_length + 1:
+            past_observations.append(np.zeros_like(current_observation))
+
+        past_observations = past_observations[: self.window_length + 1]
+
+        return np.vstack(past_observations[::-1])
 
     def __len__(self):
         return len(self.memory)

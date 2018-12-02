@@ -21,9 +21,6 @@ class ReplayBuffer(Memory):
         next_observation: ndarray,
         terminal: bool,
     ) -> None:
-        super(ReplayBuffer, self).append(
-            observation, action, reward, next_observation, terminal
-        )
 
         self.memory.append(
             self.experience(observation, action, reward, next_observation, terminal)

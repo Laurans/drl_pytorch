@@ -219,8 +219,10 @@ class Monitor:
 
         while eval_step < self.eval_steps:
 
-            eval_action, q_values = self.agent.get_raw_actions(state)
+            state_processed = self.agent.memory.get_recent_states(state).flatten()
+            eval_action, q_values = self.agent.get_raw_actions(state_processed)
             next_state, reward, done = self.env.step(eval_action)
+            self.agent.memory.append_recent(state, done)
             self._render(eval_step, "eval")
             self._show_values(q_values)
 
