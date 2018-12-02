@@ -5,26 +5,25 @@
 * docker
 * nvidia-docker
 
-For python on the host machine, you can use pipenv with pyenv
-* [pyenv installer](https://github.com/pyenv/pyenv-installer), [more about pyenv](https://github.com/pyenv/pyenv)
-* [pipenv](https://pipenv.readthedocs.io/en/latest/)
+If you want to install all requirements on your machine, docker image use :
+* python 3.6
+* pytorch 0.4.1
+* and all requirements listed in `docker/requirement.txt`
 
+### Dashboard
+Docker or not, this project use [visdom](https://github.com/facebookresearch/visdom) for visualizing plots in real-time
+
+![](assets/visdom_dashboard.png)
+
+
+## Installing
 
 ### To build Docker image
 
 ```
+cd docker/
 docker build -t drlnd_image .
 ```
-
-
-### Python libraries on the host machine
-
-Python libraries are listed in `Pipfile`. You can install it by using 
-```
-pipenv install
-```
-
-
 
 ## Usage
 
@@ -36,11 +35,16 @@ python -m visdom.server
 ``` 
 
 ### Docker 
+
+If you don't want to use docker with root, please had the `--user` parameter
 ```
-docker run --runtime=nvidia -it --rm -v $PWD:/workdir -w /workdir --network=host --user="$(id -u):$(id -g)" drlnd_image python ./main.py
+docker run --runtime=nvidia -it --rm -v $PWD:/workdir -w /workdir --network=host --user="$(id -u):$(id -g)" drlnd_image [CMD-see-below]
 ```
 
-### Run test
+#### CLI
+
+
+#### Running the tests
 ```
-docker run --runtime=nvidia -it --rm -v $PWD:/workdir -w /workdir --network=host --user="$(id -u):$(id -g)" drlnd_image python setup.py pytest
+python setup.py pytest
 ```
