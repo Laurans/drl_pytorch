@@ -17,7 +17,6 @@ RUN apt-get update && apt-get install -y \
 COPY bootstrap.sh /
 COPY requirements.txt .
 
-RUN pip install --no-cache-dir -r requirements.txt && pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.txt && pip install --upgrade pip && chmod +x "/bootstrap.sh" && mkdir /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix
 
-RUN chmod +x "/bootstrap.sh"
 ENTRYPOINT ["/bootstrap.sh"]
