@@ -71,9 +71,7 @@ class Params:
 
 
 class ModelParams(Params):
-    def __init__(
-        self, verbose: int, machine: str = "machine", timestamp: str = ""
-    ) -> None:
+    def __init__(self, args) -> None:
         """Model global parameters
         
         Args:
@@ -83,7 +81,7 @@ class ModelParams(Params):
         
         """
 
-        super(ModelParams, self).__init__(verbose, machine=machine, timestamp=timestamp)
+        super(ModelParams, self).__init__(**args)
 
         self.hist_len = 1
         self.hidden_dim = 128
@@ -93,9 +91,7 @@ class ModelParams(Params):
 
 
 class MemoryParams(Params):
-    def __init__(
-        self, verbose: int, machine: str = "machine", timestamp: str = ""
-    ) -> None:
+    def __init__(self, args) -> None:
         """Memory global parameters
         
         Args:
@@ -105,9 +101,7 @@ class MemoryParams(Params):
         
         """
 
-        super(MemoryParams, self).__init__(
-            verbose, machine=machine, timestamp=timestamp
-        )
+        super(MemoryParams, self).__init__(**args)
 
         self.memory_size = int(1e5)
         self.experience = namedtuple(
@@ -119,9 +113,7 @@ class MemoryParams(Params):
 
 
 class AgentParams(Params):
-    def __init__(
-        self, verbose: int, machine: str = "default", timestamp: str = ""
-    ) -> None:
+    def __init__(self, args) -> None:
         """Agent global parameters. It contains Model and Memory Parameters
         
         Args:
@@ -130,10 +122,10 @@ class AgentParams(Params):
             timestamp (str, optional): Defaults to "". Time where the algorithm is run. Used to create logging filename signature
         """
 
-        super(AgentParams, self).__init__(verbose, machine=machine, timestamp=timestamp)
+        super(AgentParams, self).__init__(**args)
 
-        self.model_params = ModelParams(verbose, machine=machine, timestamp=timestamp)
-        self.memory_params = MemoryParams(verbose, machine=machine, timestamp=timestamp)
+        self.model_params = ModelParams(args)
+        self.memory_params = MemoryParams(args)
 
         self.training = True
 
@@ -161,9 +153,7 @@ class AgentParams(Params):
 
 
 class EnvParams(Params):
-    def __init__(
-        self, verbose: int, machine: str = "default", timestamp: str = ""
-    ) -> None:
+    def __init__(self, args) -> None:
         """Agent global parameters. It contains Model and Memory Parameters
         
         Args:
@@ -172,7 +162,10 @@ class EnvParams(Params):
             timestamp (str, optional): Defaults to "". Time where the algorithm is run. Used to create logging filename signature
         """
 
-        super(EnvParams, self).__init__(verbose, machine=machine, timestamp=timestamp)
+        super(EnvParams, self).__init__(**args)
+        self.logger.debug(f"Env env type {self.env_type}")
+
+        self.pixels = False
 
 
 class MonitorParams(Params):
@@ -183,6 +176,7 @@ class MonitorParams(Params):
         timestamp: str = "",
         visualize: bool = False,
         env_render: bool = False,
+        config_number: int = 0,
     ):
         """Monitor global parameters. It contains an AgentParams object and set visualisation options
         
@@ -194,9 +188,16 @@ class MonitorParams(Params):
             env_render (bool, optional): Defaults to False. Save evaluation images in directory to used later
         """
 
-        super(MonitorParams, self).__init__(
-            verbose, machine, timestamp, visualize, env_render
+        args = dict(
+            verbose=verbose,
+            machine=machine,
+            timestamp=timestamp,
+            config_number=config_number,
+            visualize=visualize,
+            env_render=env_render,
         )
+
+        super(MonitorParams, self).__init__(**args)
 
         self.train_n_episodes = 10000
         self.max_steps_in_episode = 1000
@@ -211,8 +212,8 @@ class MonitorParams(Params):
 
         self.reward_solved_criteria = 200
 
-        self.agent_params = AgentParams(verbose, machine=machine, timestamp=timestamp)
-        self.env_params = EnvParams(verbose, machine=machine, timestamp=timestamp)
+        self.agent_params = AgentParams(args)
+        self.env_params = EnvParams(args)
 
         if self.env_render:
             self.img_dir = self.root_dir + "/imgs/"
