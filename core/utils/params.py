@@ -68,6 +68,7 @@ class Params:
             self.game = config["game"]
             self.model_type = config["model_type"]
             self.memory_type = config["memory_type"]
+            self.actions_legend = config["actions_legend"]
 
 
 class ModelParams(Params):
@@ -111,7 +112,7 @@ class MemoryParams(Params):
 
         self.window_length = 0
 
-        self.combined_with_last = True
+        self.combined_with_last = False
 
 class AgentParams(Params):
     def __init__(self, args) -> None:

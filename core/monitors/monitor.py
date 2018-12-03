@@ -55,6 +55,7 @@ class Monitor:
             memory_prototype=memory_prototype,
         )
 
+        self.actions_legend = monitor_param.actions_legend
         self._reset_log()
 
     def _reset_log(self):
@@ -303,7 +304,7 @@ class Monitor:
                 win="q_values",
                 opts=dict(
                     title="q_values",
-                    legend=["Nop", "left engine", "main engine", "right engine"],
+                    legend=self.actions_legend,
                 ),
             )
 
@@ -318,7 +319,7 @@ class Monitor:
                     Y=data[:, 1],
                     env=self.refs,
                     win=f"win_{key}",
-                    opts=dict(title=key, markers=True),
+                    opts=dict(title=key),
                 )
             elif self.summaries[key]["type"] == "text":
                 self.visdom.text(

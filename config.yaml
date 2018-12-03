@@ -4,6 +4,7 @@
   game: LunarLander-v2
   model_type: dqn_mlp
   memory_type: replaybuffer
+  actions_legend: ["Nop", "left engine", "main engine", "right engine"]
 
 1:
   agent_type: dqn
@@ -11,3 +12,4 @@
   game: envs/Banana_Linux_NoVis/Banana.x86_64
   model_type: dqn_mlp
   memory_type: replaybuffer
+  actions_legend: ["walk forward", "walk backward", "turn left", "turn right"]
