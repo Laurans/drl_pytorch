@@ -44,7 +44,5 @@ class QNetwork_MLP(Model):
         for layer in self.hidden_layers:
             if isinstance(layer, nn.Linear):
                 x = F.relu(layer(x))
-            else:
-                x = layer(x)
 
         return self.output_layer(x)

@@ -31,3 +31,22 @@ class TestMLPModel(unittest.TestCase):
         state = torch.from_numpy(np.array([[2.5]])).float()
         output = self.net.forward(state).cpu().detach().numpy()
         self.assertAlmostEqual(-0.54986596, output[0][0])
+
+@pytest.fixture
+def model():
+    par = ModelParams({"verbose": 0})
+    par.state_shape = (1,)
+    par.action_dim = 1
+    par.hidden_dim = [2, 3, 4, 5, 2]
+    par.seed = 23
+    par.hist_len = 1
+
+    return QNetwork_MLP(model_params=par)
+
+def test_seed(model):
+    assert model.seed == 23
+
+def test_model_forward(model):
+    state = torch.from_numpy(np.array([[2.5]])).float()
+    output = model.forward(state).cpu().detach().numpy()
+    assert pytest.approx(output[0][0], 0.001) == -0.606
