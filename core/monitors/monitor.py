@@ -107,6 +107,7 @@ class Monitor:
 
     def train(self):
         self.agent.training = True
+        self.env.training = True
         self.logger.warning(
             "nununununununununununununu Training ... nununununununununununununu"
         )
@@ -207,6 +208,7 @@ class Monitor:
 
     def eval_agent(self):
         self.agent.training = False
+        self.env.training = False
 
         eval_step = 0
         eval_nepisodes_solved = 0
@@ -265,6 +267,7 @@ class Monitor:
 
     def test_agent(self, checkpoint=""):
         self.agent.training = False
+        self.env.training = False
         self.agent.load(checkpoint)
         self.env_render = True
         step = 0

@@ -12,17 +12,19 @@ class UnityEnv(Env):
         self.brain = self.env.brains[self.brain_name]
 
         self.pixels = env_params.pixels
+        self.training = True
 
     def get_state_shape(self):
-        self.env_info = self.env.reset(train_mode=True)[self.brain_name]
+        self.env_info = self.env.reset(train_mode=self.training)[self.brain_name]
         state = self.env_info.vector_observations[0]
+        self.logger.debug(f'{state}')
         return state.shape
 
     def get_action_size(self):
         return self.brain.vector_action_space_size
 
     def reset(self):
-        self.env_info = self.env.reset(train_mode=True)[self.brain_name]
+        self.env_info = self.env.reset(train_mode=self.training)[self.brain_name]
         return self.env_info.vector_observations[0]
 
     def step(self, action):
