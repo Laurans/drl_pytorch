@@ -15,8 +15,6 @@ from numpy import float64, ndarray
 from typing import Tuple, Type, Union
 from numpy import float64, int64, ndarray
 
-import pdb
-
 
 class MLPAgent(Agent):
     def __init__(
@@ -99,12 +97,16 @@ class MLPAgent(Agent):
     def save(self, checkpoint=""):
         if checkpoint == "":
             checkpoint = f"{self.model_dir}{self.agent_name}.pth"
+        else:
+            checkpoint = f"{self.model_dir}{checkpoint}"
 
         torch.save(self.model.state_dict(), checkpoint)
 
     def load(self, checkpoint=""):
         if checkpoint == "":
             checkpoint = f"{self.model_dir}{self.agent_name}.pth"
+        else:
+            checkpoint = f"{self.model_dir}{checkpoint}"
 
         self.model.load_state_dict(torch.load(checkpoint))
 

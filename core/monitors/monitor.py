@@ -2,7 +2,6 @@ import gym
 from datetime import datetime
 from collections import deque
 import numpy as np
-import pdb
 
 
 class Monitor:
@@ -26,6 +25,8 @@ class Monitor:
             self.imsave = monitor_param.imsave
             self.img_dir = monitor_param.img_dir
 
+        self.testing_at_end_training = monitor_param.testing
+
         self.train_n_episodes = monitor_param.train_n_episodes
         self.test_n_episodes = monitor_param.test_n_episodes
         self.max_steps_in_episode = monitor_param.max_steps_in_episode
@@ -46,6 +47,8 @@ class Monitor:
 
         state_shape = self.env.get_state_shape()
         action_size = self.env.get_action_size()
+
+        self.output_filename = monitor_param.output_filename
 
         self.agent = agent_prototype(
             agent_params=monitor_param.agent_params,
@@ -105,6 +108,27 @@ class Monitor:
 
         return episode_reward, episode_steps, np.mean(losses)
 
+    def _when_resolved(self, rewards_window, i_episode, start_time, steps_window, loss):
+        self._report_log_visual(
+            i_episode, True, start_time, rewards_window, steps_window, loss
+        )
+
+        self.logger.info(f"+-+-+-+-+-+-+-+ Saving model ... +-+-+-+-+-+-+-+")
+        self.agent.save(self.output_filename)
+
+        self.logger.warning(
+            f"nununununununununununununu Evaluating @ Step {self.counter_steps}  nununununununununununununu"
+        )
+        self.eval_agent()
+        if self.visualize:
+            self._visual()
+
+        if self.testing_at_end_training:
+            self.logger.warning(
+                f"nununununununununununununu Testing Agent  nununununununununununununu"
+            )
+            self.test_agent()
+
     def train(self):
         self.agent.training = True
         self.env.training = True
@@ -127,25 +151,9 @@ class Monitor:
 
             # If resolved
             if np.mean(rewards_window) >= self.reward_solved_criteria:
-                self._report_log_visual(
-                    i_episode, True, start_time, rewards_window, steps_window, loss
+                self._when_resolved(
+                    rewards_window, i_episode, start_time, steps_window, loss
                 )
-
-                self.logger.info(f"+-+-+-+-+-+-+-+ Saving model ... +-+-+-+-+-+-+-+")
-                self.agent.save()
-
-                self.logger.warning(
-                    f"nununununununununununununu Evaluating @ Step {self.counter_steps}  nununununununununununununu"
-                )
-                self.eval_agent()
-                if self.visualize:
-                    self._visual()
-
-                self.logger.warning(
-                    f"nununununununununununununu Testing Agent  nununununununununununununu"
-                )
-                self.test_agent()
-
                 break
 
             if i_episode % self.report_freq == 0:
@@ -305,10 +313,7 @@ class Monitor:
                 values.T,
                 env=self.refs,
                 win="q_values",
-                opts=dict(
-                    title="q_values",
-                    legend=self.actions_legend,
-                ),
+                opts=dict(title="q_values", legend=self.actions_legend),
             )
 
     def _visual(self):
@@ -331,4 +336,3 @@ class Monitor:
                     win=f"win_{key}",
                     opts=dict(title=key),
                 )
-

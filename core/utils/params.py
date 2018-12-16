@@ -9,8 +9,6 @@ import torch.optim as optim
 
 import yaml
 
-import pdb
-
 
 class Params:
     def __init__(
@@ -43,6 +41,7 @@ class Params:
         self.seed = 0
         self.visualize = visualize
         self.env_render = env_render
+        self.testing = False
 
         # prefix for saving
         self.refs = self.machine + "_" + self.timestamp
@@ -113,6 +112,7 @@ class MemoryParams(Params):
         self.window_length = 0
 
         self.combined_with_last = False
+
 
 class AgentParams(Params):
     def __init__(self, args) -> None:
@@ -199,6 +199,8 @@ class MonitorParams(Params):
         )
 
         super(MonitorParams, self).__init__(**args)
+
+        self.output_filename = "checkpoint.pth"
 
         self.train_n_episodes = 10000
         self.max_steps_in_episode = 1000
